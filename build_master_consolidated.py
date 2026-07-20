@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
-"""쇼핑몰 관리 통합 워크북 생성 스크립트.
+"""쇼핑몰 관리 통합 워크북 생성 스크립트 (빈 템플릿, 8개 탭 한 파일).
 
-원본 라이브 구글시트(거래처 관리 대장 / 지인 판매 관리 / 에이블리 파트너스 정산 관리 /
-리뷰 협찬 관리 대장 — 실제 데이터 포함)를 그대로 재현하고, 여기에 지출 관리 /
-거래처 관리(위치순) / 거래처 관리(발행일순) / 월별 순수익금 4개 탭을 추가한
-통합 워크북을 만든다. 전부 같은 파일 안에 있으므로 IMPORTRANGE 없이
-시트 간 수식으로 바로 연동된다.
+거래처 관리 / 거래처 관리(위치순) / 거래처 관리(발행일순) / 지출 관리 /
+지인 판매 관리 / 에이블리 파트너스 정산 관리 / 리뷰 협찬 관리 / 월별 순수익금.
+전부 같은 파일 안에 있으므로 IMPORTRANGE 없이 시트 간 수식으로 바로 연동된다.
+실제 데이터는 넣지 않음 — 사용자가 원본에서 직접 복사해서 붙여넣는 용도.
 
 실행: python3 build_master_consolidated.py
 """
@@ -33,24 +32,7 @@ OUTPUT_PATH = Path(__file__).parent / "쇼핑몰_관리_통합.xlsx"
     "세금계산서 발행 여부", "세금계산서 발행일", "샘플 가능 여부", "비고",
 ]
 
-거래처_REAL_ROWS = [
-    ["위디(withee)", "디오트 B1 I-18호", "010-6789-6764", "K : withee2026", "★4",
-     "디자인은 예쁜데 가격대 비쌈", "3010377709921(정한얼/농협)", "O", "6일", "", ""],
-    ["시우팀팀", "디오트 1층 G-14호", "010-3935-4187 02-2117-4332", "", "★1",
-     "하나 사입해왔는데 품절됨", "20791035298507(하나/한지연)", "O", "10일", "", ""],
-    ["키치키치(kichkich) 마젠타(에이블리용)", "남평화 3층 가 33호", "010-9108-3331", "", "★3",
-     "옷 저렴&예쁨/ 다만 무서움", "02314285104019(기업/김지혜)", "O", "5일", "", ""],
-    ["브리니", "디오트 1층 A-15", "010-9231-4549", "", "★5",
-     "", "140015691122(신한/(주)브리니랩)", "O", "5일", "", "입금 시 상호명으로"],
-    ["퍼플그레이", "남평화 3층 100, 103호", "010-9639-3221", "K : with_button", "★5",
-     "", "02314354504013(기업/위드버튼 고은석)", "O", "5일", "", ""],
-    ["앨라", "누죤 지하1층 514", "010-5098-5860", "", "★1",
-     "신마 이용 /장끼 X", "", "", "", "", ""],
-    ["mineD 마인디", "디오트 지하2층 D24", "010-6518-4108 02-2117-4108", "K : mined24 I : mined4108", "★2",
-     "신마 이용 /장끼 X / 품절건 카톡 문의 > 친절", "02211131104016(기업/박윤정)", "O", "10일", "", "화이트 컬러 제외 깔교 가능(2주 이내)"],
-]
-
-거래처_ROW_COUNT = 9
+거래처_ROW_COUNT = 3
 
 
 def build_거래처관리대장(wb: Workbook) -> None:
@@ -67,12 +49,6 @@ def build_거래처관리대장(wb: Workbook) -> None:
     base.write_header(ws, header_row, 거래처_HEADERS)
     base.style_body_rows(ws, header_row, 거래처_ROW_COUNT, last_col)
     base.add_no_column(ws, header_row, 거래처_ROW_COUNT)
-
-    for i, row_values in enumerate(거래처_REAL_ROWS):
-        row = header_row + 1 + i
-        for col_offset, value in enumerate(row_values, start=2):
-            if value:
-                ws.cell(row=row, column=col_offset, value=value)
 
     base.add_dropdown(ws, "F", header_row, 거래처_ROW_COUNT, ["★1", "★2", "★3", "★4", "★5"])
     base.add_dropdown(ws, "I", header_row, 거래처_ROW_COUNT, ["필요", "불필요", "요청완료", "발행완료", "O"])
@@ -134,7 +110,7 @@ def build_지인판매관리(wb: Workbook) -> None:
     ws = wb.create_sheet("지인 판매 관리")
     last_col = len(지인판매_HEADERS)
     header_row = 4
-    row_count = 8
+    row_count = 3
     sum_row = header_row + 1 + row_count
 
     base.write_title_block(
@@ -175,7 +151,7 @@ def build_에이블리파트너스정산관리(wb: Workbook) -> None:
     ws = wb.create_sheet("에이블리 파트너스 정산 관리")
     last_col = len(정산_HEADERS)
     header_row = 5
-    row_count = 8
+    row_count = 3
     sum_row = header_row + 1 + row_count
 
     base.write_title_block(
@@ -203,7 +179,7 @@ def build_에이블리파트너스정산관리(wb: Workbook) -> None:
 
 
 SETTLEMENT_HEADER_ROW = 5
-SETTLEMENT_ROW_COUNT = 8
+SETTLEMENT_ROW_COUNT = 3
 
 
 # ---------------------------------------------------------------------------
@@ -221,7 +197,7 @@ def build_리뷰협찬관리대장(wb: Workbook) -> None:
     ws = wb.create_sheet("리뷰 협찬 관리 대장")
     last_col = len(리뷰_HEADERS)
     header_row = 4
-    row_count = 8
+    row_count = 3
     sum_row = header_row + 1 + row_count
 
     base.write_title_block(
@@ -311,7 +287,7 @@ def build_월별순수익금(wb: Workbook) -> None:
 # ---------------------------------------------------------------------------
 
 def main() -> None:
-    base.ROW_COUNTS["지출 관리"] = 8
+    base.ROW_COUNTS["지출 관리"] = 3
 
     wb = Workbook()
     build_거래처관리대장(wb)
