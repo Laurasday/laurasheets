@@ -25,6 +25,15 @@ MASTER_SETTLEMENT_TAB = "에이블리 파트너스 정산 관리"
 # 마스터 파일의 정산 데이터 범위: 헤더 5행, 데이터 6~29행 (No,정산월,판매금액,수수료,정산예정금액,원천징수세,실수령액,정산여부,비고)
 MASTER_SETTLEMENT_DATA_RANGE = f"{MASTER_SETTLEMENT_TAB}!B6:G29"
 
+MASTER_VENDOR_TAB = "거래처 관리 대장"
+# 마스터 파일의 거래처 데이터 범위: 헤더 4행, 데이터 5~34행 (No~비고, 12열)
+MASTER_VENDOR_DATA_RANGE = f"{MASTER_VENDOR_TAB}!A5:L34"
+거래처_HEADERS = [
+    "No", "거래처명", "위치정보(주소)", "담당자/연락처", "메신저",
+    "개인평가 (★1~5)", "평가 메모", "계좌번호(은행)",
+    "세금계산서 발행 여부", "세금계산서 발행일", "샘플 가능 여부", "비고",
+]
+
 # 지출 관리 탭 내부 구조 (build_shop_excel.build_지출관리 기준)
 EXPENSE_HEADER_ROW = 4
 EXPENSE_ROW_COUNT = base.ROW_COUNTS["지출 관리"]
@@ -104,9 +113,39 @@ def build_월별순수익금(wb: Workbook) -> None:
     ws.freeze_panes = f"A{header_row + 1}"
 
 
+def build_거래처_view(wb: Workbook, sheet_name: str, sort_col_formula: str, description: str) -> None:
+    ws = wb.create_sheet(sheet_name)
+    last_col = len(거래처_HEADERS)
+    header_row = 4
+
+    base.write_title_block(
+        ws, sheet_name, description,
+        "※ 원본 거래처 관리 파일의 '거래처 관리 대장' 탭을 IMPORTRANGE로 실시간 정렬해서 보여줍니다. 최초 1회 '액세스 허용' 클릭이 필요합니다.",
+        last_col,
+    )
+    base.write_header(ws, header_row, 거래처_HEADERS)
+    ws.cell(
+        row=header_row + 1, column=1,
+        value=(
+            f'=SORT(IMPORTRANGE("{MASTER_SHEET_URL}","{MASTER_VENDOR_DATA_RANGE}"), {sort_col_formula}, TRUE)'
+        ),
+    )
+    base.set_widths(ws, [6, 24, 20, 20, 18, 10, 26, 22, 14, 12, 12, 24])
+    ws.freeze_panes = f"A{header_row + 1}"
+
+
 def main() -> None:
     wb = Workbook()
     default_sheet = wb.active
+    build_거래처_view(
+        wb, "거래처 관리 (위치순)", "3",
+        "위치정보(주소) 가나다순 자동 정렬 뷰",
+    )
+    build_거래처_view(
+        wb, "거래처 관리 (발행일순)",
+        'IFERROR(VALUE(REGEXREPLACE(IMPORTRANGE("' + MASTER_SHEET_URL + '","' + MASTER_VENDOR_TAB + '!J5:J34"),"[^0-9]","")),9999)',
+        "세금계산서 발행일(N일) 오름차순 자동 정렬 뷰",
+    )
     base.build_지출관리(wb)
     build_월별순수익금(wb)
     wb.remove(default_sheet)
