@@ -21,11 +21,11 @@ import build_shop_excel as base
 OUTPUT_PATH = Path(__file__).parent / "지출관리_월별순수익금.xlsx"
 
 MASTER_SHEET_URL = "https://docs.google.com/spreadsheets/d/1g8rE93aEcWroOBt0uoqezmtkRysxi-Wx3-qcBD4c0zE/edit"
-MASTER_SETTLEMENT_TAB = "에이블리 파트너스 정산 관리"
+MASTER_SETTLEMENT_TAB = "4.에이블리 정산 관리"
 # 마스터 파일의 정산 데이터 범위: 헤더 5행, 데이터 6~29행 (No,정산월,판매금액,수수료,정산예정금액,원천징수세,실수령액,정산여부,비고)
 MASTER_SETTLEMENT_DATA_RANGE = f"{MASTER_SETTLEMENT_TAB}!B6:G29"
 
-MASTER_VENDOR_TAB = "거래처 관리 대장"
+MASTER_VENDOR_TAB = "1.거래처 관리"
 # 마스터 파일의 거래처 데이터 범위: 헤더 4행, 데이터 5~34행 (No~비고, 12열)
 MASTER_VENDOR_DATA_RANGE = f"{MASTER_VENDOR_TAB}!A5:L34"
 거래처_HEADERS = [
