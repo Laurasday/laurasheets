@@ -110,7 +110,7 @@ def build_지인판매관리(wb: Workbook) -> None:
     ws = wb.create_sheet("지인 판매 관리")
     last_col = len(지인판매_HEADERS)
     header_row = 4
-    row_count = 3
+    row_count = 2
     sum_row = header_row + 1 + row_count
 
     base.write_title_block(
@@ -151,7 +151,7 @@ def build_에이블리파트너스정산관리(wb: Workbook) -> None:
     ws = wb.create_sheet("에이블리 파트너스 정산 관리")
     last_col = len(정산_HEADERS)
     header_row = 5
-    row_count = 3
+    row_count = 2
     sum_row = header_row + 1 + row_count
 
     base.write_title_block(
@@ -197,7 +197,7 @@ def build_리뷰협찬관리대장(wb: Workbook) -> None:
     ws = wb.create_sheet("리뷰 협찬 관리 대장")
     last_col = len(리뷰_HEADERS)
     header_row = 4
-    row_count = 3
+    row_count = 2
     sum_row = header_row + 1 + row_count
 
     base.write_title_block(
@@ -253,7 +253,7 @@ def build_월별순수익금(wb: Workbook) -> None:
     # 행을 나중에 추가해도 계속 잡히도록 넉넉한 범위(500행)를 참조
     exp_start, exp_end = 5, 500
     review_start, review_end = 5, 500
-    settle_start, settle_end = 5, 500
+    settle_start, settle_end = SETTLEMENT_HEADER_ROW + 1, 500
 
     start, end = header_row + 1, header_row + row_count
     for i, row in enumerate(range(start, end + 1)):
