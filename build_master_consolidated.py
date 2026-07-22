@@ -239,8 +239,10 @@ def build_월별순수익금(wb: Workbook) -> None:
     header_row = 4
 
     base.write_title_block(
-        ws, "월별 순수익금", "지출 관리 + 에이블리 정산 실수령액을 월별로 집계",
-        "※ 같은 파일 안의 '지출 관리'와 '에이블리 파트너스 정산 관리' 탭을 자동으로 참조합니다.",
+        ws, "월별 순수익금", "지출 관리 + 리뷰 협찬 페이백 + 에이블리 정산 실수령액을 월별로 집계",
+        "※ 같은 파일 안의 '지출 관리'(총 지급액) + '리뷰 협찬 관리 대장'(페이백 금액, 리뷰 게시일 기준)을 지출로,"
+        " '에이블리 파트너스 정산 관리'(실수령액)를 수익으로 자동 집계합니다. 행을 추가로 늘려도 계속 반영되도록"
+        " 여유 있는 범위(500행)를 참조합니다.",
         last_col,
     )
     base.write_header(ws, header_row, ["월", "지출 합계", "수익(정산금) 합계", "순수익금"])
@@ -248,10 +250,10 @@ def build_월별순수익금(wb: Workbook) -> None:
     row_count = 12
     base.style_body_rows(ws, header_row, row_count, last_col)
 
-    exp_start = 5
-    exp_end = 4 + base.ROW_COUNTS["지출 관리"]
-    settle_start = SETTLEMENT_HEADER_ROW + 1
-    settle_end = SETTLEMENT_HEADER_ROW + SETTLEMENT_ROW_COUNT
+    # 행을 나중에 추가해도 계속 잡히도록 넉넉한 범위(500행)를 참조
+    exp_start, exp_end = 5, 500
+    review_start, review_end = 5, 500
+    settle_start, settle_end = 5, 500
 
     start, end = header_row + 1, header_row + row_count
     for i, row in enumerate(range(start, end + 1)):
@@ -263,6 +265,8 @@ def build_월별순수익금(wb: Workbook) -> None:
             value=(
                 f"=SUMPRODUCT((TEXT('지출 관리'!$B${exp_start}:$B${exp_end},\"yyyy-mm\")=TEXT($A{row},\"yyyy-mm\"))"
                 f"*'지출 관리'!$H${exp_start}:$H${exp_end})"
+                f"+SUMPRODUCT((TEXT('리뷰 협찬 관리 대장'!$J${review_start}:$J${review_end},\"yyyy-mm\")=TEXT($A{row},\"yyyy-mm\"))"
+                f"*'리뷰 협찬 관리 대장'!$H${review_start}:$H${review_end})"
             ),
         )
         ws.cell(
