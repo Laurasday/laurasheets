@@ -18,7 +18,7 @@ OUTPUT_PATH = Path(__file__).parent / "쇼핑몰_관리_통합_2.xlsx"
 
 
 def main() -> None:
-    base.ROW_COUNTS["지출 관리"] = 6
+    base.ROW_COUNTS["지출 관리"] = 4
 
     wb = Workbook()
     default_sheet = wb.active
